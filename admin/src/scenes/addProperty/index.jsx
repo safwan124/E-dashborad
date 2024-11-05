@@ -18,7 +18,7 @@ const AddPropertyPage = () => {
   const [propertyData, setPropertyData] = useState({ city: "", category: "", images: [], videos: [] });
   const [selectedFiles, setSelectedFiles] = useState({ images: null, videos: null });
   const [repeatedFields, setRepeatedFields] = useState([]);
-  const apiUrl = process.env.REACT_APP_API_URL || "https://api.theeaglesrealty.com";
+  const apiUrl = import.meta.env.REACT_APP_API_URL || "https://api.theeaglesrealty.com";
   
   const handleCategoryChange = (e) => {
     const category = e.target.value;

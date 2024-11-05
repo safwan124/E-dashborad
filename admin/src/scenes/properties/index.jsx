@@ -11,7 +11,7 @@ const Properties = () => {
   const navigate = useNavigate();
 
   const [properties, setProperties] = useState([]);
-  const apiUrl = process.env.REACT_APP_API_URL || "https://api.theeaglesrealty.com";
+  const apiUrl = import.meta.env.REACT_APP_API_URL || "https://api.theeaglesrealty.com";
 
   const columns = [
     { field: "id", headerName: "ID" },
@@ -117,7 +117,7 @@ const Properties = () => {
     };
   
     fetchProperties();
-  }, []);
+  }, [apiUrl]);
   
 
   return (
