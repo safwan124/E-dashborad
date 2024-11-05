@@ -18,7 +18,8 @@ const AddPropertyPage = () => {
   const [propertyData, setPropertyData] = useState({ city: "", category: "", images: [], videos: [] });
   const [selectedFiles, setSelectedFiles] = useState({ images: null, videos: null });
   const [repeatedFields, setRepeatedFields] = useState([]);
-
+  const apiUrl = process.env.REACT_APP_API_URL || "https://api.theeaglesrealty.com";
+  
   const handleCategoryChange = (e) => {
     const category = e.target.value;
     setPropertyData({ ...propertyData, category });
@@ -54,10 +55,10 @@ const AddPropertyPage = () => {
     }
 
     try {
-        const response = await fetch("http://localhost:5000/properties", {
-            method: "POST",
-            body: formData,
-        });
+      const response = await fetch(`${apiUrl}/properties`, {
+          method: "POST",
+          body: formData,
+      });
 
         if (response.ok) {
             alert("Property added successfully");

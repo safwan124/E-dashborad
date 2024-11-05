@@ -11,6 +11,7 @@ const Properties = () => {
   const navigate = useNavigate();
 
   const [properties, setProperties] = useState([]);
+  const apiUrl = process.env.REACT_APP_API_URL || "https://api.theeaglesrealty.com";
 
   const columns = [
     { field: "id", headerName: "ID" },
@@ -92,9 +93,9 @@ const Properties = () => {
   useEffect(() => {
     const fetchProperties = async () => {
       try {
-        const response = await fetch("http://localhost:5000/properties", {
+        const response = await fetch(`${apiUrl}/properties`, {
           method: "GET",
-        });
+      });
   
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
