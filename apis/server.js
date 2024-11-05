@@ -11,8 +11,9 @@ const PORT = process.env.PORT || 5000;
 
 app.use(bodyParser.json());
 app.use(cors({
-  origin: ['http://admin.theeaglesrealty.com'],
+  origin: ['https://admin.theeaglesrealty.com', 'http://localhost:5174'],
   methods: ['GET', 'POST', 'PUT', 'DELETE'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
   credentials: true
 }));
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
