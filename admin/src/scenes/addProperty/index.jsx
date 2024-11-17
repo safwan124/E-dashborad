@@ -18,7 +18,7 @@ const AddPropertyPage = () => {
   const [propertyData, setPropertyData] = useState({ city: "", category: "", images: [], videos: [] });
   const [selectedFiles, setSelectedFiles] = useState({ images: null, videos: null });
   const [repeatedFields, setRepeatedFields] = useState([]);
-  const apiUrl = import.meta.env.REACT_APP_API_URL || "https://api.theeaglesrealty.com";
+  const apiUrl = import.meta.env.REACT_APP_API_URL || "https://api.theeaglesrealty.com"; //http://localhost:5000
   
   const handleCategoryChange = (e) => {
     const category = e.target.value;
@@ -31,7 +31,11 @@ const AddPropertyPage = () => {
   };
 
   const handleFileChange = (e, type) => {
-    setSelectedFiles((prev) => ({ ...prev, [type]: e.target.files }));
+    const files = Array.from(e.target.files);
+    setSelectedFiles((prev) => ({
+      ...prev,
+      [type]: [...(prev[type] || []), ...files], // Append new files to existing ones
+    }));
   };
 
   const addField = () => {
@@ -131,7 +135,7 @@ const AddPropertyPage = () => {
           <Typography>Upload Images</Typography>
           <Button onClick={addField} variant="outlined" color="secondary">Add Field</Button>
           {repeatedFields.map((_, index) => (
-            <input type="file" multiple accept="image/*" onChange={(e) => handleFileChange(e, "images")} style={{ display: "block", margin: "10px 0" }} />
+            <input key={`image-field-${index}`} type="file" multiple accept="image/*" onChange={(e) => handleFileChange(e, "images")} style={{ display: "block", margin: "10px 0" }} />
           ))}
 
           <input type="file" multiple accept="image/*" onChange={(e) => handleFileChange(e, "images")} style={{ display: "block", margin: "10px 0" }} />

@@ -11,11 +11,11 @@ const PORT = process.env.PORT || 5000;
 
 app.use(bodyParser.json());
 app.use(cors({
-  origin: ['https://admin.theeaglesrealty.com', 'http://localhost:5174'],
+  origin: '*', // Allow all origins
   methods: ['GET', 'POST', 'PUT', 'DELETE'],
-  allowedHeaders: ['Content-Type', 'Authorization'],
-  credentials: true
+  allowedHeaders: ['Content-Type', 'Authorization']
 }));
+
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
 const storage = multer.diskStorage({
@@ -230,7 +230,7 @@ app.get("/properties/:id", (req, res) => {
 });
 
 
-app.post("/properties", upload.fields([{ name: "images", maxCount: 10 }, { name: "videos", maxCount: 5 }]), (req, res) => {
+app.post("/properties", upload.fields([{ name: "images", maxCount: 10 }, { name: "videos", maxCount: 1 }]), (req, res) => {
   const { city, category, title, extent, planlandplantation, riversidebackwater, location, distance, village, road, soil, facing, plantation, coconut, arecanut, mango, sapota, pomegranate, teak, silveroak, fencing, borewell, openWell, farmhouse, pumpHouse, cowShed, pricePerGunta, totalPrice, layoutName, siteDimension, totalArea, siteFacing, siteNumber, roadWidth, mudaAllotted, mudaApproved, dtcpApproved, bhk, groundduplex, buildersFloor, area, mainDoorFacing, bedrooms, attachBathrooms, commonBathroom, poojaRoom, totalBuiltUpArea, balconies, totalFloors, semiFurnished, fullyFurnished, carParking, projectname, bhks, Bathrooms, Balconie, Totalnumberofflats, ageoftheapartment, TotalfloorsintheApartment, Flatonfloornumber, Flatsonthatfloor, Furnished, Builtuparea, Carpetarea, Superarea, Lift, carparkingopenorcovered, Monthlymaintainacecharges, ageofthebuilding, Price,     plainlandorIndustary, industrydetails, shedsize, powersanction, approvals,featured } = req.body;
   console.log(req.body);
 
@@ -269,7 +269,7 @@ app.post("/properties", upload.fields([{ name: "images", maxCount: 10 }, { name:
   });
 });
 
-app.put("/properties/:id", upload.fields([{ name: "images", maxCount: 10 }, { name: "videos", maxCount: 5 }]), (req, res) => {
+app.put("/properties/:id", upload.fields([{ name: "images", maxCount: 10 }, { name: "videos", maxCount: 1 }]), (req, res) => {
   const { id } = req.params;
   const {
     city, category, title, extent, planlandplantation, riversidebackwater, location, distance, village, road, soil, facing,
@@ -284,8 +284,8 @@ app.put("/properties/:id", upload.fields([{ name: "images", maxCount: 10 }, { na
   } = req.body;
 
   // Mapping files and setting relative paths
-  const images = req.files.images ? req.files.images.map(file => path.join("/", file.path)) : [];
-  const videos = req.files.videos ? req.files.videos.map(file => path.join("/", file.path)) : [];
+  const images = req.files.images ? req.files.images.map(file => path.join("/", file.path)) : null;
+  const videos = req.files.videos ? req.files.videos.map(file => path.join("/", file.path)) : null;
 
   // Boolean value handling for featured
   const isFeatured = featured === "TRUE" ? 1 : 0;

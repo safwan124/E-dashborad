@@ -159,7 +159,7 @@ const SideBar = () => {
             icon={<ReceiptOutlined />}
           />
           <Item
-            title="Leads"
+            title="Blogs"
             path="/contacts"
             colors={colors}
             icon={<ContactsOutlined />}

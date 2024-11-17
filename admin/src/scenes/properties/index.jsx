@@ -11,7 +11,7 @@ const Properties = () => {
   const navigate = useNavigate();
 
   const [properties, setProperties] = useState([]);
-  const apiUrl = import.meta.env.REACT_APP_API_URL || "https://api.theeaglesrealty.com";
+  const apiUrl = import.meta.env.REACT_APP_API_URL || "https://api.theeaglesrealty.com"; //http://localhost:5000
 
   const columns = [
     { field: "id", headerName: "ID" },
@@ -22,55 +22,22 @@ const Properties = () => {
       field: "media",
       headerName: "Property Media",
       flex: 1,
-      renderCell: ({ row }) => (
-        <Box display="flex" gap={1} flexWrap="wrap">
-          {Array.isArray(row.media) && row.media.length > 0 ? (
-            row.media.map((media, index) => (
-              media.endsWith('.jpg') || media.endsWith('.png') || media.endsWith('.jpeg') ? (
-                <Box
-                  key={index}
-                  component="img"
-                  src={media}
-                  alt={`media-${index}`}
-                  sx={{
-                    width: 200,
-                    height: 50,
-                    borderRadius: 4,
-                    objectFit: 'contain',
-                    cursor: 'pointer',
-                    '&:hover': {
-                      opacity: 0.8
-                    }
-                  }}
-                  onClick={() => window.open(media, '_blank')}
-                />
-              ) : (
-                <Box
-                  key={index}
-                  component="video"
-                  controls
-                  src={media}
-                  alt={`media-${index}`}
-                  sx={{
-                    width: 200,
-                    height: 50,
-                    borderRadius: 4,
-                    objectFit: 'contain',
-                    cursor: 'pointer',
-                    '&:hover': {
-                      opacity: 0.8
-                    }
-                  }}
-                  onClick={() => window.open(media, '_blank')}
-                />
-              )
-            ))
-          ) : (
-            <Typography>No Media Available</Typography>
-          )}
-        </Box>
-      ),
-    },      
+      renderCell: ({ row }) => {
+        return (
+          <Box display="flex" gap={1} flexWrap="wrap">
+            {Array.isArray(row.media) && row.media.length > 0 ? (
+              <img
+                src={row.media[1]} // Display the first image
+                alt="Property"
+                style={{ width: "100px", height: "100px", objectFit: "cover" }}
+              />
+            ) : (
+              "No Media Available"
+            )}
+          </Box>
+        );
+      },
+    },         
     { field: "pricePerGunta", headerName: "Price per Gunta", type: "number", flex: 1 },
     { field: "totalPrice", headerName: "Total Price", type: "number", flex: 1 },
     { field: "featured", headerName: "Featured", flex: 1 },
@@ -107,7 +74,7 @@ const Properties = () => {
         // Assuming row.images is a JSON string, parse it
         const formattedProperties = data.data.map(property => ({
           ...property,
-          images: JSON.parse(property.images), // Parse images if stored as a JSON string
+          media: JSON.parse(property.images), // Parse images if stored as a JSON string
         }));
   
         setProperties(formattedProperties);
