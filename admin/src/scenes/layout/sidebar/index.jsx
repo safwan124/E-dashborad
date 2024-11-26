@@ -160,16 +160,16 @@ const SideBar = () => {
           />
           <Item
             title="Blogs"
-            path="/contacts"
+            path="/blogs"
             colors={colors}
             icon={<ContactsOutlined />}
           />
-          {/* <Item
-            title="Invoices Balances"
-            path="/invoices"
+          <Item
+            title="Campaigns"
+            path="/campaigns"
             colors={colors}
             icon={<ReceiptOutlined />}
-          /> */}
+          />
         </Menu>
         {/* <Typography
           variant="h6"

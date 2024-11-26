@@ -4,6 +4,10 @@ import Dashboard from "./dashboard";
 import Properties from "./properties";
 import AddProperty from "./addProperty";
 import EditProperty from "./editProperty";
+import Blogs from "./blogs";
+import AddBlog from "./addBlogs";
+import Campaigns from "./campaigns";
+import AddCampaign from "./addCampaign";
 import Invoices from "./invoices";
 import Contacts from "./contacts";
 import Form from "./form";
@@ -22,6 +26,10 @@ export {
   Properties,
   AddProperty,
   EditProperty,
+  Blogs,
+  AddBlog,
+  Campaigns,
+  AddCampaign,
   Invoices,
   Contacts,
   Form,

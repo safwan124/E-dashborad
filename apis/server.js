@@ -119,6 +119,26 @@ db.run(
   )`
 );
 
+db.run(
+  `CREATE TABLE IF NOT EXISTS blogs (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    image TEXT NULL,
+    headline TEXT NOT NULL,
+    description TEXT NULL
+  )`
+);
+
+db.run(
+  `CREATE TABLE IF NOT EXISTS campaign (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    name TEXT NOT NULL,
+    description TEXT NULL,
+    banner_image TEXT,
+    gallery TEXT,
+    location_image TEXT 
+  )`
+);
+
 app.get("/properties", (req, res) => {
   console.log("Received GET request for /properties");
   const sql = `SELECT 
@@ -212,6 +232,58 @@ app.get("/properties", (req, res) => {
   });
 });
 
+app.get("/blogs", (req, res) => {
+  console.log("Received GET request for /blogs");
+  const sql = `SELECT
+  id,
+  image,
+  headline,
+  description
+  FROM blogs`;
+  db.all(sql, [], (err, rows) => {
+    if (err) {
+      console.error("Error fetching properties:", err);
+      return res.status(500).json({ error: "Internal server error" });
+    }
+    res.json({ data: rows });
+  });
+})
+
+app.get("/campaign", (req, res) => {
+  console.log("Received GET request for /campaign");
+  const sql = `
+    SELECT
+      id,
+      name,
+      description,
+      banner_image,
+      gallery,
+      location_image
+    FROM campaign
+    ORDER BY id DESC
+    LIMIT 1
+  `;
+
+  db.get(sql, [], (err, row) => {
+    if (err) {
+      console.error("Error fetching latest campaign:", err);
+      return res.status(500).json({ error: "Internal server error" });
+    }
+
+    if (!row) {
+      return res.json({ data: null }); // Return null if no campaign exists
+    }
+
+    // Ensure gallery is properly formatted as a string
+    const campaign = {
+      ...row,
+      gallery: row.gallery ? row.gallery.toString() : null,
+    };
+
+    res.json({ data: campaign });
+  });
+});
+
 // Route to fetch a specific property by ID
 app.get("/properties/:id", (req, res) => {
   const { id } = req.params; // Extract 'id' from the URL parameters
@@ -230,7 +302,7 @@ app.get("/properties/:id", (req, res) => {
 });
 
 
-app.post("/properties", upload.fields([{ name: "images", maxCount: 10 }, { name: "videos", maxCount: 1 }]), (req, res) => {
+app.post("/properties", upload.fields([{ name: "images", maxCount: 5 }, { name: "videos", maxCount: 1 }]), (req, res) => {
   const { city, category, title, extent, planlandplantation, riversidebackwater, location, distance, village, road, soil, facing, plantation, coconut, arecanut, mango, sapota, pomegranate, teak, silveroak, fencing, borewell, openWell, farmhouse, pumpHouse, cowShed, pricePerGunta, totalPrice, layoutName, siteDimension, totalArea, siteFacing, siteNumber, roadWidth, mudaAllotted, mudaApproved, dtcpApproved, bhk, groundduplex, buildersFloor, area, mainDoorFacing, bedrooms, attachBathrooms, commonBathroom, poojaRoom, totalBuiltUpArea, balconies, totalFloors, semiFurnished, fullyFurnished, carParking, projectname, bhks, Bathrooms, Balconie, Totalnumberofflats, ageoftheapartment, TotalfloorsintheApartment, Flatonfloornumber, Flatsonthatfloor, Furnished, Builtuparea, Carpetarea, Superarea, Lift, carparkingopenorcovered, Monthlymaintainacecharges, ageofthebuilding, Price,     plainlandorIndustary, industrydetails, shedsize, powersanction, approvals,featured } = req.body;
   console.log(req.body);
 
@@ -268,6 +340,81 @@ app.post("/properties", upload.fields([{ name: "images", maxCount: 10 }, { name:
     });
   });
 });
+
+app.post("/blogs", upload.single("image"), (req, res) => {
+  console.log("Received POST request for /blogs");
+
+  const { headline, description } = req.body;
+  const image = req.file ? req.file.filename : null;
+
+  if (!headline || !description || !image) {
+    return res.status(400).json({ error: "All fields are required." });
+  }
+
+  const sql = `
+    INSERT INTO blogs (image, headline, description)
+    VALUES (?, ?, ?)`;
+
+  db.run(sql, [image, headline, description], function (err) {
+    if (err) {
+      console.error("Error inserting blog entry:", err);
+      return res.status(500).json({ error: "Internal server error" });
+    }
+
+    res.status(201).json({
+      message: "Blog created successfully",
+      blogId: this.lastID, // Return the ID of the newly created blog
+    });
+  });
+});
+
+app.post(
+  "/campaign",
+  upload.fields([
+    { name: "banner_image", maxCount: 1 },
+    { name: "gallery", maxCount: 10 }, // Gallery supports multiple images
+    { name: "location_image", maxCount: 1 },
+  ]),
+  (req, res) => {
+    console.log("Received POST request for /campaign");
+
+    const { name, description } = req.body;
+    const bannerImage = req.files["banner_image"]
+      ? req.files["banner_image"][0].filename
+      : null;
+    const galleryImages = req.files["gallery"]
+      ? req.files["gallery"].map((file) => file.filename).join(",")
+      : null;
+    const locationImage = req.files["location_image"]
+      ? req.files["location_image"][0].filename
+      : null;
+
+    if (!name || !description || !bannerImage || !locationImage) {
+      return res.status(400).json({
+        error: "Name, description, banner_image, and location_image are required.",
+      });
+    }
+
+    const sql = `
+      INSERT INTO campaign (name, description, banner_image, gallery, location_image)
+      VALUES (?, ?, ?, ?, ?)`;
+
+    db.run(
+      sql,
+      [name, description, bannerImage, galleryImages, locationImage],
+      function (err) {
+        if (err) {
+          console.error("Error inserting campaign:", err);
+          return res.status(500).json({ error: "Internal server error" });
+        }
+
+        res.status(201).json({
+          message: "Campaign created successfully",
+          campaignId: this.lastID, // ID of the newly created campaign
+        });
+      }
+    );
+  });
 
 app.put("/properties/:id", upload.fields([{ name: "images", maxCount: 10 }, { name: "videos", maxCount: 1 }]), (req, res) => {
   const { id } = req.params;

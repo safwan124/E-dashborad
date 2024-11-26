@@ -16,7 +16,12 @@ import {
   Geography,
   Calendar,
   Stream,
+  Blogs,
+  AddBlog,
+  Campaigns,
+  AddCampaign,
 } from "./scenes";
+import { Campaign } from "@mui/icons-material";
 
 const AppRouter = () => {
   return (
@@ -27,6 +32,10 @@ const AppRouter = () => {
           <Route path="/properties" element={<Properties />} />
           <Route path="/add-Property" element={<AddProperty />} />
           <Route path="/edit-property/:id" element={<EditProperty />} />
+          <Route path="/blogs" element={<Blogs />} />
+          <Route path="/add-blog" element={<AddBlog />} />
+          <Route path="/campaigns" element={<Campaigns />} />
+          <Route path="/add-campaign" element={<AddCampaign />} />
           <Route path="/contacts" element={<Contacts />} />
           <Route path="/invoices" element={<Invoices />} />
           <Route path="/form" element={<Form />} />
