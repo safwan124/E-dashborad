@@ -98,40 +98,63 @@ const AddPropertyPage = () => {
             ))}
           </Select>
 
-          {propertyData.category && 
-          categories.find((cat) => cat.value === propertyData.category).fields.reduce((acc, field, index, array) => {
-            if (index % 2 === 0) {
-              // Every two fields, push a Row with two Cols to the accumulator
-              acc.push(
-                <Row key={field}>
-                  <Col md={6} sm={12}>
-                    <TextField
-                      label={field.replace(/([A-Z])/g, " $1").trim()}
-                      name={field}
-                      value={propertyData[field] || ""}
-                      onChange={handleInputChange}
-                      fullWidth
-                      margin="normal"
-                    />
-                  </Col>
-                  {/* Check if the next field exists for the second column */}
-                  {array[index + 1] && (
-                    <Col md={6} sm={12}>
-                      <TextField
-                        label={array[index + 1].replace(/([A-Z])/g, " $1").trim()}
-                        name={array[index + 1]}
-                        value={propertyData[array[index + 1]] || ""}
-                        onChange={handleInputChange}
-                        fullWidth
-                        margin="normal"
-                      />
-                    </Col>
-                  )}
-                </Row>
-              );
-            }
-            return acc;
-          }, [])}
+          {propertyData.category &&
+            categories
+              .find((cat) => cat.value === propertyData.category)
+              .fields.reduce((acc, field, index, array) => {
+                if (field === "featured") {
+                  // Special case for checkbox field
+                  acc.push(
+                    <Row key={field}>
+                      <Col md={6} sm={12}>
+                        <Typography>{field.replace(/([A-Z])/g, " $1").trim()}</Typography>
+                        <input
+                          type="checkbox"
+                          name={field}
+                          checked={Boolean(propertyData[field])}
+                          onChange={(e) =>
+                            setPropertyData((prev) => ({
+                              ...prev,
+                              [field]: e.target.checked,
+                            }))
+                          }
+                          style={{ marginLeft: "10px" }}
+                        />
+                      </Col>
+                    </Row>
+                  );
+                } else if (index % 2 === 0) {
+                  // Every two fields, push a Row with two Cols to the accumulator
+                  acc.push(
+                    <Row key={field}>
+                      <Col md={6} sm={12}>
+                        <TextField
+                          label={field.replace(/([A-Z])/g, " $1").trim()}
+                          name={field}
+                          value={propertyData[field] || ""}
+                          onChange={handleInputChange}
+                          fullWidth
+                          margin="normal"
+                        />
+                      </Col>
+                      {/* Check if the next field exists for the second column */}
+                      {array[index + 1] && array[index + 1] !== "featured" && (
+                        <Col md={6} sm={12}>
+                          <TextField
+                            label={array[index + 1].replace(/([A-Z])/g, " $1").trim()}
+                            name={array[index + 1]}
+                            value={propertyData[array[index + 1]] || ""}
+                            onChange={handleInputChange}
+                            fullWidth
+                            margin="normal"
+                          />
+                        </Col>
+                      )}
+                    </Row>
+                  );
+                }
+                return acc;
+              }, [])}
           <Typography>Upload Images</Typography>
           <Button onClick={addField} variant="outlined" color="secondary">Add Field</Button>
           {repeatedFields.map((_, index) => (
